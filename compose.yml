@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  # Flask App
+  app:
+    build: ./app
+    command: ["python", "app.py"]
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./app:/app
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=development
+
+volumes:
+  app_data:
+
+networks:
+  default:
+    driver: bridge
+
