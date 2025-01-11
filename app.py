@@ -5,7 +5,7 @@ import os
 app = Flask(__name__)
 
 # Directory where files are stored
-FILES_DIRECTORY = "./files"
+FILES_DIRECTORY = "/app/files"
 
 @app.route("/api/files", methods=["GET"])
 def list_files():
