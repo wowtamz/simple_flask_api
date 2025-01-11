@@ -1,5 +1,7 @@
 FROM nvidia/cuda:11.7.1-base-ubuntu20.04
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 #python:3.11
 
 # Ensure no GPU support
@@ -16,6 +18,9 @@ RUN apt-get update && apt-get install -y \
     git \
     python3 python3-pip \
     && rm -rf /var/lib/apt/lists/* 
+
+ENV TZ=Europe/Berlin
+RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && dpkg-reconfigure --frontend noninteractive tzdata
 
 RUN pip install --no-cache-dir -r requirements.txt
 
