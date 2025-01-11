@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Flask File Management and LLM Chat API
 
 This repository contains a Python Flask application that provides a RESTful API for two key functionalities:
@@ -20,7 +19,3 @@ This repository contains a Python Flask application that provides a RESTful API 
 ### Prerequisites
 - Python 3.8 or higher
 - Pip (Python package manager)
-=======
-# simple_flask_api
-This Python Flask application serves as a simple API for managing and interacting with files and a local LLM utilizing GPT4All. This app is lightweight, extensible, and designed to facilitate easy interaction with local resources and machine learning models..
->>>>>>> ed14d3b93ab02a1475cc0c1be1c48f19a79c8797
