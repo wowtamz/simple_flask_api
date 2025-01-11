@@ -46,7 +46,7 @@ def post_message():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 if __name__ == "__main__":
-    model = GPT4All("Llama-3.2-1B-Instruct-Q4_0.gguf") # downloads / loads a LLM
+    model = GPT4All("Llama-3.2-1B-Instruct-Q4_0.gguf", device="cpu") # downloads / loads a LLM
     with model.chat_session():
         print(model.generate("How can I run LLMs efficiently on my laptop?", max_tokens=1024))
     app.run(debug=True)
