@@ -17,7 +17,9 @@ RUN apt-get update && apt-get install -y \
     software-properties-common \
     git \
     python3 python3-pip \
-    && rm -rf /var/lib/apt/lists/* 
+    && rm -rf /var/lib/apt/lists/*
+
+RUN ln -sf /usr/bin/python3 /usr/bin/python
 
 ENV TZ=Europe/Berlin
 RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && dpkg-reconfigure --frontend noninteractive tzdata
