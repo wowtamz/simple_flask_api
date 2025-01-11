@@ -17,7 +17,20 @@ RUN apt-get update && apt-get install -y \
     software-properties-common \
     git \
     python3 python3-pip \
+    wget \
+    && wget http://ftp.gnu.org/gnu/libc/glibc-2.32.tar.gz \
+    && tar -xvzf glibc-2.32.tar.gz \
+    && cd glibc-2.32 \
+    && mkdir build && cd build \
+    && ../configure --prefix=/opt/glibc-2.32 \
+    && make -j$(nproc) \
+    && make install \
+    && cd ../.. \
+    && rm -rf glibc-2.32 glibc-2.32.tar.gz \
     && rm -rf /var/lib/apt/lists/*
+    
+# Ensure the container uses the new glibc version
+ENV LD_LIBRARY_PATH=/opt/glibc-2.32/lib:$LD_LIBRARY_PATH
 
 RUN ln -sf /usr/bin/python3 /usr/bin/python
 
