@@ -15,6 +15,13 @@ def list_files():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+@app.route("/api/files/<filename>", methods=["GET"])
+def download_file(filename):
+    try:
+        return send_from_directory(FILES_DIRECTORY, filename, as_attachment=True)
+    except FileNotFoundError:
+        return jsonify({"status": "error", "message": "File not found"}), 404
+
 if __name__ == "__main__":
     app.run(debug=True)
 
