@@ -58,6 +58,30 @@ def post_message():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+@app.route('/api/test_post', methods=['POST'])
+def test_post():
+    try:
+        # Get JSON data from the POST request
+        data = request.get_json()
+
+        # Extract the text message
+        if not data or 'message' not in data:
+            return jsonify({"status": "error", "message": "No message provided"}), 400
+
+        message = data['message']
+
+        # Process the message (for this example, we'll just return it)
+        print(f"Received message: {message}")
+
+        #response = requests.post(API_URL, json=data, headers=headers)
+        response = {"status": "ok", "message":f"You sent {message}"}
+
+        return jsonify(response), 200
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)
 
