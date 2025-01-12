@@ -27,19 +27,14 @@ def download_file(filename):
 @app.route('/api/chat', methods=['POST'])
 def post_message():
     try:
-        # Get JSON data from the POST request
         data = request.get_json()
-
-        # Extract the text message
         if not data or 'message' not in data:
             return jsonify({"status": "error", "message": "No message provided"}), 400
 
         message = data['message']
-
         headers = {"Content-Type": "application/json"}
-        
         request_data = {
-            "model":"falcon3-1b-instruct-abliterated",
+            "model": "falcon3-1b-instruct-abliterated",
             "messages": [
                 {"role": "system", "content": "You're a NPC in a fantasy game.'"},
                 {"role": "user", "content": message}
@@ -48,17 +43,14 @@ def post_message():
             "temperature": 0.7
         }
 
-        # Process the message (for this example, we'll just return it)
-        print(f"Received message: {message}")
-        
-        def external_request(_data):
-            response = requests.post(API_URL, json=_data, headers=headers)
-            return response
+        response = requests.post(API_URL, json=request_data, headers=headers, timeout=5)
+        response.raise_for_status()
+        return jsonify(response.json()), 200
 
-        response = external_request(request_data)
-
-        return jsonify(response), 200
-
+    except requests.exceptions.HTTPError as http_err:
+        return jsonify({"status": "error", "message": f"HTTP error: {http_err}"}), 500
+    except requests.exceptions.RequestException as req_err:
+        return jsonify({"status": "error", "message": f"Request error: {req_err}"}), 500
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
