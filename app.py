@@ -43,7 +43,7 @@ def post_message():
             "temperature": 0.7
         }
 
-        response = requests.post(API_URL, json=request_data, headers=headers, timeout=5)
+        response = requests.post(API_URL, json=request_data, headers=headers, timeout=15)
         response.raise_for_status()
         return jsonify(response.json()), 200
 
