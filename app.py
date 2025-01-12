@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 # Directory where files are stored
 FILES_DIRECTORY = "/app/files"
-API_URL = "http://localhost:8080/v1/chat/completions"
+API_URL = "http://roguedev.net:8080/v1/chat/completions"
 
 @app.route("/api/files", methods=["GET"])
 def list_files():
