@@ -1,5 +1,6 @@
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory
 import os
+import requests
 
 app = Flask(__name__)
 
@@ -52,12 +53,11 @@ def post_message():
 
         response = requests.post(API_URL, json=data, headers=headers)
 
-        # {"status": "success", "message": response}
         return jsonify(response), 200
 
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
 
