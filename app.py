@@ -38,7 +38,7 @@ def post_message():
 
         headers = {"Content-Type": "application/json"}
         
-        data = {
+        request_data = {
             "model":"falcon3-1b-instruct-abliterated",
             "messages": [
                 {"role": "system", "content": "You're a NPC in a fantasy game.'"},
@@ -50,8 +50,12 @@ def post_message():
 
         # Process the message (for this example, we'll just return it)
         print(f"Received message: {message}")
+        
+        def external_request(_data):
+            response = requests.post(API_URL, json=_data, headers=headers)
+            return response
 
-        response = requests.post(API_URL, json=data, headers=headers)
+        response = external_request(request_data)
 
         return jsonify(response), 200
 
