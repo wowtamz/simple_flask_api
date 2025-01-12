@@ -1,11 +1,11 @@
 from flask import Flask, jsonify, send_from_directory
-from gpt4all import GPT4All
 import os
 
 app = Flask(__name__)
 
 # Directory where files are stored
 FILES_DIRECTORY = "/app/files"
+API_URL = "http://localhost:8080/v1/chat/completions"
 
 @app.route("/api/files", methods=["GET"])
 def list_files():
@@ -35,19 +35,29 @@ def post_message():
 
         message = data['message']
 
+        headers = {"Content-Type": "application/json"}
+        
+        data = {
+            "model":"falcon3-1b-instruct-abliterated",
+            "messages": [
+                {"role": "system", "content": "You're a NPC in a fantasy game.'"},
+                {"role": "user", "content": message}
+            ],
+            "max_tokens": 32,
+            "temperature": 0.7
+        }
+
         # Process the message (for this example, we'll just return it)
         print(f"Received message: {message}")
 
-        answer = model.generate(message, max_tokens=512)
+        response = requests.post(API_URL, json=data, headers=headers)
 
-        return jsonify({"status": "success", "message": answer}), 200
+        # {"status": "success", "message": response}
+        return jsonify(response), 200
 
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
 if __name__ == "__main__":
-    model = GPT4All("Llama-3.2-1B-Instruct-Q4_0.gguf", device="cpu") # downloads / loads a LLM
-    with model.chat_session():
-        print(model.generate("How can I run LLMs efficiently on my laptop?", max_tokens=1024))
     app.run(debug=True)
 
