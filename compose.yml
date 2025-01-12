@@ -1,10 +1,12 @@
 version: '3.8'
 
 services:
-  # Flask App
-  app:
-    build: ./app
-    command: ["python", "app.py"]
+  flask:
+    container_name: flask_api
+    image: python:3.9.21-alpine3.21
+    working_dir: /app
+    command: ["/bin/sh", "-c", "pip install --upgrade pip && pip install -r requirements.txt && python app.py"]
+
     ports:
       - "5000:5000"
     volumes:
@@ -12,9 +14,6 @@ services:
     environment:
       - FLASK_APP=app.py
       - FLASK_ENV=development
-
-volumes:
-  app_data:
 
 networks:
   default:
