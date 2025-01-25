@@ -1,30 +1,71 @@
 from flask import Flask, request, jsonify, send_from_directory
 import os
 import requests
+import hashlib
 
 app = Flask(__name__)
 
 # Directory where files are stored
 FILES_DIRECTORY = "/app/files"
-API_URL = "http://roguedev.net:8080/v1/chat/completions"
+API_URL = "your.api.url"
+HASH_EXTENSION = ".sha256"
 
-@app.route("/api/files", methods=["GET"])
-def list_files():
+def get_files():
+    return [f for f in os.listdir(FILES_DIRECTORY) if os.path.isfile(os.path.join(FILES_DIRECTORY, f))]
+
+def get_checksums():
+    return list(filter(lambda filename: (filename.endswith(HASH_EXTENSION))), get_files())
+
+def get_data_files():
+    return list(filter(lambda filename: (not filename.endswith(HASH_EXTENSION))), get_files())
+
+def check_sums():
+    missing_sums = list(filter(lambda filename: (get_sums().index(filename + HASH_EXTENSION) == -1)), get_data_files())
+    for missing_sum in missing_sums:
+        generate_sum(missing_sum)
+
+def generate_sum(file):
+    file_hash = ""
+    with open (FILES_DIRECTORY + "/" + file, "rb") as f:
+        bytes = f.read()
+        file_hash = hashlib.sha256(bytes).hexdigest()
+    
     try:
-        # Get list of files in the directory
-        files = [f for f in os.listdir(FILES_DIRECTORY) if os.path.isfile(os.path.join(FILES_DIRECTORY, f))]
-        return jsonify({"status": "success", "files": files}), 200
+        with open (FILES_DIRECTORY + "/" + file + HASH_EXTENSION, "x") as f:
+            f.write(file_hash)
+    except FileExistsError:
+        print("Checksum already exists.")
+
+def get_files_and_sums(version = None):
+    
+    file_and_sum_pairs = []    
+
+    data_files = get_data_files()
+    for file in data_files:
+        f = open(FILES_DIRECTORY + "/" + file + HASH_EXTENSION, "r")
+        file_and_sum_pairs.append({"filename":file, "hash":f.read()})
+    
+    return file_and_sum_pairs
+
+@app.route("/update", methods=["GET"])
+def list_files():
+
+    check_sums()
+
+    try:
+        response = get_files_and_sums()
+        return jsonify({"status": "success", "files": response}), 200
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
-@app.route("/api/files/<filename>", methods=["GET"])
+@app.route("/files/<filename>", methods=["GET"])
 def download_file(filename):
     try:
         return send_from_directory(FILES_DIRECTORY, filename, as_attachment=True)
     except FileNotFoundError:
         return jsonify({"status": "error", "message": "File not found"}), 404
 
-@app.route('/api/chat', methods=['POST'])
+@app.route('/chat', methods=['POST'])
 def post_message():
     try:
         data = request.get_json()
@@ -80,4 +121,6 @@ def test_post():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)
+
+
 
