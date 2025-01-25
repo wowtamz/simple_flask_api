@@ -43,7 +43,7 @@ def get_files_and_sums(version = None):
     data_files = get_data_files()
     for file in data_files:
         f = open(FILES_DIRECTORY + "/" + file + HASH_EXTENSION, "r")
-        file_and_sum_pairs.append({"filename":file, "hash":f.read()})
+        file_and_sum_pairs.append({"path":file, "hash":f.read()})
     
     return file_and_sum_pairs
 
