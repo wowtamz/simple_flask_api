@@ -14,13 +14,13 @@ def get_files():
     return [f for f in os.listdir(FILES_DIRECTORY) if os.path.isfile(os.path.join(FILES_DIRECTORY, f))]
 
 def get_checksums():
-    return list(filter(lambda filename: (filename.endswith(HASH_EXTENSION)), get_files())
+    return list(filter(lambda filename: (filename.endswith(HASH_EXTENSION)), get_files()))
 
 def get_data_files():
-    return list(filter(lambda filename: (not filename.endswith(HASH_EXTENSION)), get_files())
+    return list(filter(lambda filename: (not filename.endswith(HASH_EXTENSION)), get_files()))
 
 def check_sums():
-    missing_sums = list(filter(lambda filename: (get_sums().index(filename + HASH_EXTENSION) == -1), get_data_files())
+    missing_sums = list(filter(lambda filename: (get_sums().index(filename + HASH_EXTENSION) == -1), get_data_files()))
     for missing_sum in missing_sums:
         generate_sum(missing_sum)
 
