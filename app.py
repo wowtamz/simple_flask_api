@@ -47,13 +47,17 @@ def get_files_and_sums(version = None):
     
     return file_and_sum_pairs
 
-@app.route("/update", methods=["GET"])
+@app.route("/update", methods=["POST"])
 def list_files():
 
     check_sums()
 
     try:
-        response = get_files_and_sums()
+        data = request.get_json()
+        if not data or "version" not in data:
+            return jsonify({"status": "error", "message": "No version provided"}), 400
+        version = data["version"]
+        response = get_files_and_sums(version)
         return jsonify({"status": "success", "files": response}), 200
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
