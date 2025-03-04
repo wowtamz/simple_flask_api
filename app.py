@@ -6,12 +6,18 @@ import hashlib
 app = Flask(__name__)
 
 # Directory where files are stored
-FILES_DIRECTORY = "/app/files"
+FILES_DIRECTORY = "files" #"/app/files"
 API_URL = "your.api.url"
 HASH_EXTENSION = ".sha256"
 
 def get_files():
-    return [f for f in os.listdir(FILES_DIRECTORY) if os.path.isfile(os.path.join(FILES_DIRECTORY, f))]
+    file_list = []
+    for root, _, files in os.walk(FILES_DIRECTORY):
+        for file in files:
+            full_path = os.path.join(root, file)
+            relative_path = os.path.relpath(full_path, FILES_DIRECTORY)
+            file_list.append(relative_path)  # Get full file path
+    return file_list
 
 def get_checksums():
     return list(filter(lambda filename: (filename.endswith(HASH_EXTENSION)), get_files()))
