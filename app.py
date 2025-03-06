@@ -53,6 +53,12 @@ def get_files_and_sums(version = None):
     
     return file_and_sum_pairs
 
+def split_file_and_path(filename):
+    last_slash_index = filename.rindex("/") + 1
+    path = filename[0:last_slash_index]
+    file_name = filename[last_slash_index:len(filename)]
+    return path, file_name
+
 @app.route("/update", methods=["POST"])
 def list_files():
 
@@ -68,10 +74,11 @@ def list_files():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
-@app.route("/files/<filename>", methods=["GET"])
-def download_file(filename):
+@app.route("/files/<path:filepath>", methods=["GET"])
+def download_file(filepath):
     try:
-        return send_from_directory(FILES_DIRECTORY, filename, as_attachment=True)
+        path, filename = split_file_and_path(filepath)
+        return send_from_directory(f"{FILES_DIRECTORY}/{path}" , filename, as_attachment=True)
     except FileNotFoundError:
         return jsonify({"status": "error", "message": "File not found"}), 404
 
