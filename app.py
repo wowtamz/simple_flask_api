@@ -54,10 +54,13 @@ def get_files_and_sums(version = None):
     return file_and_sum_pairs
 
 def split_file_and_path(filename):
-    last_slash_index = filename.rindex("/") + 1
-    path = filename[0:last_slash_index]
-    file_name = filename[last_slash_index:len(filename)]
-    return path, file_name
+
+    path = ""
+    if filename.rfind("/") != -1:
+        last_slash_index = filename.rindex("/") + 1
+        path = filename[0:last_slash_index]
+        filename = filename[last_slash_index:len(filename)]
+    return path, filename
 
 @app.route("/update", methods=["POST"])
 def list_files():
