@@ -10,6 +10,18 @@ FILES_DIRECTORY = "files" #"/app/files"
 API_URL = "your.api.url"
 HASH_EXTENSION = ".sha256"
 
+def get_file_size_in_bytes(path):
+    root = os.path.dirname(__file__)
+    file_name = os.path.join(root, path)
+    file_stats = os.stat(file_name)
+    return file_stats.st_size
+
+def get_sum_file_size_in_bytes(path_list):
+    total_size = 0
+    for path in path_list:
+        total_size += get_file_size_in_bytes(path)
+    return total_size
+
 def get_files():
     file_list = []
     for root, _, files in os.walk(FILES_DIRECTORY):
@@ -44,12 +56,15 @@ def generate_sum(file):
 
 def get_files_and_sums(version = None):
     
+    root = os.path.dirname(__file__)
     file_and_sum_pairs = []    
 
     data_files = get_data_files()
     for file in data_files:
         f = open(FILES_DIRECTORY + "/" + file + HASH_EXTENSION, "r")
-        file_and_sum_pairs.append({"path":file, "hash":f.read()})
+        print(root + "/" + FILES_DIRECTORY)
+        path = os.path.join(root + "/" + FILES_DIRECTORY, file)
+        file_and_sum_pairs.append({"path":file, "hash":f.read(), "bytes":get_file_size_in_bytes(path)})
     
     return file_and_sum_pairs
 
@@ -64,7 +79,6 @@ def split_file_and_path(filename):
 
 @app.route("/update", methods=["POST"])
 def list_files():
-
     check_sums()
 
     try:
